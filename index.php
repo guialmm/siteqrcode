@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Gui s2 Ana </title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=8">
+</head>
+
+<body>
+    <section class="Fundo">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <img class="fotoo img-fluid" src="assets/img/casal.jpg" alt="">
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 id="counter" class="counter"></h2>
+                    <p id="message" class="message"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Define a data inicial do relacionamento
+        const startDate = new Date('2022-05-16T19:30:00');
+
+        function updateCounter() {
+            // Obtém a data e hora atuais
+            const now = new Date();
+
+            // Calcula a diferença em milissegundos
+            const diff = now - startDate;
+
+            // Calcula os componentes do tempo
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+            const months = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+            const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60));
+            const minutes = Math.floor((diff % (1000 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Atualiza o conteúdo do contador
+            document.getElementById('counter').textContent =
+                `${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`;
+
+            const message = `Há exatamente ${years} anos, ${months} meses e ${days} dias, iniciamos essa linda jornada juntos. Cada segundo que o contador marca é um lembrete de quanto tempo venho sendo a pessoa mais feliz do mundo ao seu lado. Que venham muitos anos, meses, dias, horas e minutos para continuarmos escrevendo nossa história de amor.`;
+            document.getElementById('message').textContent = message;
+        }
+
+        // Atualiza o contador e a mensagem a cada segundo
+        setInterval(updateCounter, 1000);
+        updateCounter();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Oleo+Script:wght@400;700&display=swap');
+
+.Fundo 
+{
+  background-image: url(../img/Fundo.png);
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.fotoo 
+{
+  height: 500px;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+.counter {
+  color: #fff;
+  margin-top: 18px;
+  font-size: 36px !important;
+  letter-spacing: 0.04em;
+  line-height: 50px;
+  text-align: center !important;
+  animation: fall 1s ease-out;
+  font-family: "Oleo Script", system-ui;
+  font-weight: 700;
+}
+
+.message {
+  color: #d7d0d0eb;
+  font-size: 28px;
+  letter-spacing: .04em;
+  line-height: 40px;
+  text-align: center !important;
+  margin-top: 11px;
+  opacity: 0;
+  transform: translateY(-30px);
+  filter: blur(10px);
+  animation: fadeIn 1.5s forwards ease-out 1.5s;
+  font-family: "Oleo Script", system-ui;
+  font-weight: 400;
+}
+
+@keyframes fall 
+{
+  0% 
+  {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% 
+  {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn
+ {
+  0% 
+  {
+    opacity: 0;
+    transform: translateY(-30px);
+    filter: blur(10px);
+  }
+  100% 
+  {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+
+@media (max-width:768px)
+{
+  .fotoo 
+{
+  height: 430px;
+  margin-top: 10px;
+  border-radius: 30px;
+}
+
+.counter {
+  color: #fff;
+  margin-top: 18px;
+  font-size: 22px !important;
+  letter-spacing: 0.04em;
+  line-height: 50px;
+  text-align: center !important;
+  animation: fall 1s ease-out;
+  font-family: "Oleo Script", system-ui;
+  font-weight: 700;
+}
+
+.message {
+  color: #d7d0d0eb;
+  font-size: 18px;
+  letter-spacing: .04em;
+  line-height: 40px;
+  text-align: center !important;
+  margin-top: 11px;
+  opacity: 0;
+  transform: translateY(-30px);
+  filter: blur(10px);
+  animation: fadeIn 1.5s forwards ease-out 1.5s;
+  font-family: "Oleo Script", system-ui;
+  font-weight: 400;
+}
+
+}
