@@ -1,66 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Gui s2 Ana </title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gui & Anna</title>
+  <meta name="description" content="Nossa história, contada segundo a segundo.">
+  <meta name="theme-color" content="#0d0708">
+
+  <meta property="og:title" content="Gui & Anna">
+  <meta property="og:description" content="Nossa história, contada segundo a segundo.">
+  <meta property="og:image" content="https://guialmm.github.io/siteqrcode/assets/img/casal.jpg">
+  <meta property="og:type" content="website">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%23b3243a' d='M16 28s-11-6.6-11-14.2C5 9.4 8.2 6 12 6c2 0 3.2.9 4 2 .8-1.1 2-2 4-2 3.8 0 7 3.4 7 7.8C27 21.4 16 28 16 28z'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Pinyon+Script&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css?v=9">
 </head>
 
-<body>
-    <section class="Fundo">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <img class="fotoo img-fluid" src="assets/img/casal.jpg" alt="">
-                </div>
-            </div>
-        </div>
+<body class="is-locked">
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <h2 id="counter" class="counter"></h2>
-                    <p id="message" class="message"></p>
-                </div>
-            </div>
-        </div>
+  <!-- Tela de abertura: o toque do usuário libera a música no celular -->
+  <div class="gate" id="gate" role="dialog" aria-label="Abertura">
+    <div class="gate__inner">
+      <p class="gate__eyebrow">uma surpresa para</p>
+      <h1 class="gate__name" data-name-her>Anna</h1>
+      <button class="gate__btn" id="openBtn" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.5-9.6-9.3C.9 8.2 3 4.5 6.6 4.5c2.1 0 3.6 1.1 4.4 2.4.8-1.3 2.3-2.4 4.4-2.4 3.6 0 5.7 3.7 4.2 7.2C19.5 16.5 12 21 12 21z"/></svg>
+        <span>Abrir</span>
+      </button>
+      <p class="gate__hint">aumenta o som 🎧</p>
+    </div>
+  </div>
+
+  <canvas class="petals" id="petals" aria-hidden="true"></canvas>
+
+  <!-- Player flutuante -->
+  <button class="music" id="musicBtn" type="button" aria-label="Pausar música" hidden>
+    <span class="music__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="music__label" id="musicLabel"></span>
+  </button>
+  <audio id="audio" preload="auto" loop></audio>
+
+  <main>
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero__frame reveal">
+        <img src="assets/img/casal.jpg" alt="Gui e Anna" class="hero__photo" width="960" height="1280">
+      </div>
+      <div class="hero__text">
+        <p class="eyebrow reveal">desde <span id="sinceLabel"></span></p>
+        <h1 class="hero__title reveal"><span data-name-him>Gui</span> <em>&</em> <span data-name-her>Anna</span></h1>
+        <p class="hero__lead reveal">Cada segundo desde aquele dia, contado aqui.</p>
+      </div>
+      <a href="#tempo" class="scroll-cue" aria-label="Rolar para baixo"><span></span></a>
+    </header>
+
+    <!-- CONTADOR -->
+    <section class="section" id="tempo">
+      <p class="eyebrow reveal">juntos há</p>
+      <div class="counter reveal" id="counter">
+        <div class="unit"><b data-u="anos">0</b><span>anos</span></div>
+        <div class="unit"><b data-u="meses">0</b><span>meses</span></div>
+        <div class="unit"><b data-u="dias">0</b><span>dias</span></div>
+        <div class="unit"><b data-u="horas">0</b><span>horas</span></div>
+        <div class="unit"><b data-u="minutos">0</b><span>minutos</span></div>
+        <div class="unit"><b data-u="segundos">0</b><span>segundos</span></div>
+      </div>
+
+      <div class="stats reveal">
+        <div class="stat"><b id="statDays">0</b><span>dias ao seu lado</span></div>
+        <div class="stat"><b id="statMonths">0</b><span>mesversários</span></div>
+        <div class="stat"><b id="statMoons">0</b><span>luas cheias juntos</span></div>
+        <div class="stat"><b id="statWeekends">0</b><span>fins de semana</span></div>
+      </div>
     </section>
 
-    <script>
-        // Define a data inicial do relacionamento
-        const startDate = new Date('2022-05-16T19:30:00');
+    <!-- PRÓXIMO ANIVERSÁRIO -->
+    <section class="section section--tint">
+      <p class="eyebrow reveal">contagem regressiva</p>
+      <h2 class="title reveal">Faltam <span id="nextDays">0</span> dias<br>para os nossos <span id="nextYears">0</span> anos</h2>
+      <div class="progress reveal" aria-hidden="true"><div class="progress__bar" id="nextBar"></div></div>
+      <p class="muted reveal" id="nextDate"></p>
+    </section>
 
-        function updateCounter() {
-            // Obtém a data e hora atuais
-            const now = new Date();
+    <!-- LINHA DO TEMPO (aparece quando houver 2+ marcos) -->
+    <section class="section" id="historia" hidden>
+      <p class="eyebrow reveal">nossa história</p>
+      <h2 class="title reveal">Momentos que eu nunca vou esquecer</h2>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
 
-            // Calcula a diferença em milissegundos
-            const diff = now - startDate;
+    <!-- GALERIA (aparece quando houver 2+ fotos) -->
+    <section class="section" id="galeria" hidden>
+      <p class="eyebrow reveal">nós</p>
+      <h2 class="title reveal">Pedacinhos da gente</h2>
+      <div class="gallery" id="gallery"></div>
+    </section>
 
-            // Calcula os componentes do tempo
-            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
-            const months = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
-            const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Corrigido para usar horas no dia
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)); // Corrigido para usar minutos na hora
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    <!-- CARTA -->
+    <section class="section">
+      <p class="eyebrow reveal">pra você</p>
+      <article class="letter reveal">
+        <p class="letter__hi"><span data-name-her>Anna</span>,</p>
+        <p>Há exatamente <strong id="letterSpan"></strong>, começamos essa linda jornada juntos.</p>
+        <p>Cada segundo que o contador marca é um lembrete de quanto tempo venho sendo a pessoa mais feliz do mundo ao seu lado.</p>
+        <p>Que venham muitos anos, meses, dias, horas e minutos para continuarmos escrevendo a nossa história de amor.</p>
+        <p class="letter__sign">Com todo o meu amor,<br><span data-name-him>Gui</span></p>
+      </article>
+    </section>
 
-            // Atualiza o conteúdo do contador
-            document.getElementById('counter').textContent =
-                `${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos`;
+    <footer class="footer">
+      <p><span data-name-him>Gui</span> <span class="heart">♥</span> <span data-name-her>Anna</span></p>
+      <small>desde <span id="footerSince"></span></small>
+    </footer>
+  </main>
 
-            const message = `Há exatamente ${years} anos, ${months} meses e ${days} dias, iniciamos essa linda jornada juntos. Cada segundo que o contador marca é um lembrete de quanto tempo venho sendo a pessoa mais feliz do mundo ao seu lado. Que venham muitos anos, meses, dias, horas e minutos para continuarmos escrevendo nossa história de amor.`;
-            document.getElementById('message').textContent = message;
-        }
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox__close" id="lbClose" type="button" aria-label="Fechar">×</button>
+    <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Anterior">‹</button>
+    <figure>
+      <img id="lbImg" alt="">
+      <figcaption id="lbCap"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Próxima">›</button>
+  </div>
 
-        // Atualiza o contador e a mensagem a cada segundo
-        setInterval(updateCounter, 1000);
-        updateCounter();
-    </script>
+  <script src="assets/js/config.js?v=9"></script>
+  <script src="assets/js/main.js?v=9"></script>
 </body>
-
 </html>
