@@ -23,7 +23,7 @@ window.CONFIG = {
     // Onde ela "acaba": daqui volta para 0:00 e fica repetindo inteira.
     // "3:12" pula os ~16 s de silêncio do fim do arquivo. Vazio = toca até o fim.
     terminaEm: "3:12",
-    volume: 0.6,
+    volume: 0.25, // de 0 a 1; 0.25 deixa a música de fundo
   },
 
   // Nossa história. Os aniversários de namoro entram sozinhos;
