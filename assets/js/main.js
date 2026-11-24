@@ -77,6 +77,9 @@
   const U = Object.fromEntries($$("[data-u]").map((el) => [el.dataset.u, el]));
   const L = Object.fromEntries($$("[data-l]").map((el) => [el.dataset.l, el]));
   const anniversary = (n) => { const d = new Date(start); d.setFullYear(start.getFullYear() + n); return d; };
+  // dias de calendário até a data (0 = é hoje), sem depender da hora
+  const midnight = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const daysUntil = (d, now) => Math.round((midnight(d) - midnight(now)) / DAY);
   function nextAnniversary(now) {
     let n = 1;
     while (anniversary(n) <= now) n++;
@@ -98,10 +101,11 @@
     $("#psMonths").textContent = nf.format(t.totalMonths);
     $("#psMoons").textContent = nf.format(Math.floor(totalDays / 29.530589));
     const n = nextAnniversary(now);
-    const left = Math.ceil((n.date - now) / DAY);
-    $("#psLeft").textContent = left === 1 ? "só 1 dia" : `${nf.format(left)} dias`;
-    $("#psYears").textContent = n.years;
-    $("#psDate").textContent = fmtDate(n.date);
+    const left = daysUntil(n.date, now);
+    $("#psNext").textContent =
+      left === 0 ? `E hoje fazemos ${n.years} anos.`
+      : left === 1 ? `Amanhã fazemos ${n.years} anos.`
+      : `Faltam ${nf.format(left)} dias para os nossos ${n.years} anos, no dia ${fmtDate(n.date)}.`;
   }
   tick();
   setInterval(tick, 1000);
@@ -140,8 +144,8 @@
       if (d <= now) {
         map.set(key(d), { date: d, titulo: n === 1 ? "Nosso primeiro ano" : `${n} anos juntos`, texto: `${nf.format(Math.round((d - start) / DAY))} dias lado a lado.` });
       } else {
-        const left = Math.ceil((d - now) / DAY);
-        map.set(key(d), { date: d, futuro: true, titulo: `Nossos ${n} anos`, texto: left === 1 ? "Falta só 1 dia." : `Faltam ${nf.format(left)} dias.` });
+        const left = daysUntil(d, now);
+        map.set(key(d), { date: d, futuro: true, titulo: `Nossos ${n} anos`, texto: left === 0 ? "É hoje." : left === 1 ? "É amanhã." : `Faltam ${nf.format(left)} dias.` });
         break;
       }
     }
