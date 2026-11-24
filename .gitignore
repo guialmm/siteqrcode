@@ -1,2 +1,5 @@
 # originais das fotos (o site usa as versões leves em assets/img/fotos/)
 assets/img/WhatsApp Image*
+# cópias soltas salvas do chat
+assets/img/image-*
+.DS_Store
