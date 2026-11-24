@@ -496,12 +496,15 @@
   };
   // Na primeira vez a música começa em C.musica.comecoEm (ex.: o refrão);
   // ao terminar, o "loop" do <audio> volta para 0:00 e ela segue inteira em repetição.
-  const startAt = (() => {
-    const v = C.musica?.comecoEm;
+  const secs = (v) => {
     if (typeof v === "number") return v;
     const m = String(v || "").trim().match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
     return m ? (+m[1] || 0) * 60 + +m[2] : 0;
-  })();
+  };
+  const startAt = secs(C.musica?.comecoEm);
+  // corta o silêncio do fim: ao chegar em terminaEm, volta para 0:00
+  const endAt = secs(C.musica?.terminaEm);
+  if (endAt) audio.addEventListener("timeupdate", () => { if (audio.currentTime >= endAt) audio.currentTime = 0; });
   let seeked = !startAt;
   function seekToStart() {
     if (seeked) return;

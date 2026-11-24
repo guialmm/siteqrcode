@@ -17,9 +17,12 @@ window.CONFIG = {
   musica: {
     arquivo: "assets/audio/musica.mp3",
     titulo: "The Night We Met · Lord Huron", // aparece ao lado do disco
-    // Onde a música começa na primeira vez (minuto:segundo), ex.: "1:00" para cair no refrão.
-    // Quando ela acaba, recomeça do 0:00 e fica repetindo inteira. Vazio = começa do início.
-    comecoEm: "",
+    // Onde a música começa na primeira vez (minuto:segundo). "1:26" cai logo antes
+    // da entrada da banda inteira. Vazio = começa do início.
+    comecoEm: "1:26",
+    // Onde ela "acaba": daqui volta para 0:00 e fica repetindo inteira.
+    // "3:12" pula os ~16 s de silêncio do fim do arquivo. Vazio = toca até o fim.
+    terminaEm: "3:12",
     volume: 0.6,
   },
 
