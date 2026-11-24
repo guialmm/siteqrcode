@@ -36,6 +36,23 @@
   document.title = `${C.ele} & ${C.ela}`;
   $("#endSince").textContent = `desde ${fmtDate(start)}`;
 
+  /* ============ escrita à mão (saudação e assinatura) ============ */
+  const inkHello = window.Ink ? Ink.mount($(".salutation"), `${C.ela},`) : null;
+  const inkSign = window.Ink ? Ink.mount($(".signature"), C.ele) : null;
+  if (reduceMotion) { inkHello?.done(); inkSign?.done(); }
+  function startInk() {
+    if (reduceMotion) return;
+    // a saudação é escrita quando a carta assenta na mesa
+    setTimeout(() => inkHello?.play(), 650);
+    // a assinatura, quando ela chega ao fim da carta
+    if (inkSign && "IntersectionObserver" in window) {
+      const io = new IntersectionObserver((es) => {
+        if (es.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(() => inkSign.play({ speed: 3.6 }), 250); }
+      }, { threshold: 1, rootMargin: "0px 0px -12% 0px" });
+      io.observe(inkSign.el);
+    } else inkSign?.done();
+  }
+
   /* ============ contador ============ */
   function addMonths(date, n) {
     const d = new Date(date);
@@ -611,6 +628,7 @@
     desk.classList.add("is-in");
     if (!scrollReady) {
       scrollReady = true;
+      startInk();
       initStoryMotion();
       if (window.ScrollTrigger) ScrollTrigger.refresh();
     }
