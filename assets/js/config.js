@@ -123,5 +123,12 @@ window.CONFIG = {
     "Porque daqui a uns anos eu quero rever essas fotos com você e rir de como a gente era novo.",
     "Porque eu sei que o próximo marco dessa linha do tempo vai ter você nele.",
     "Porque, de todas as fotos daqui, a minha favorita é sempre a próxima que a gente vai tirar.",
+    "Porque perto de você eu fico com mais vontade de sair de casa: trilha, praia, show, corrida.",
+    "Porque com você do lado eu fico mais corajoso. Inclusive em cachoeira gelada.",
+    "Porque a gente combina até sem combinar. Repara em quantas fotos nossas estamos de preto.",
+    "Porque em quatro anos e meio eu aprendi seu sorriso de verdade e seu sorriso de foto. Os dois me ganham.",
+    "Porque você me faz querer ser alguém de quem você se orgulhe tanto quanto eu me orgulho de você.",
+    "Porque eu ainda te procuro primeiro em qualquer foto, até nas que têm seis pessoas.",
+    "Porque este maço acaba, mas a lista de motivos não.",
   ],
 };
