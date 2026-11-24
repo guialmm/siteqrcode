@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css?v=11">
+  <link rel="stylesheet" href="assets/css/styles.css?v=12">
 </head>
 
 <body class="is-sealed">
@@ -84,32 +84,76 @@
       <p class="ps"><span class="ps__mark">P.S.</span> Até agora foram <span id="psDays"></span> dias, <span id="psMonths"></span> mesversários e <span id="psMoons"></span> luas cheias. Faltam <span id="psLeft"></span> para os nossos <span id="psYears"></span> anos, no dia <span id="psDate"></span>.</p>
     </article>
 
-    <!-- Linha do tempo: aparece com 2+ marcos no config -->
-    <section class="sheet sheet--story" id="historia" hidden>
-      <h2 class="hand">Nossa história</h2>
-      <ol class="story" id="story"></ol>
+    <!-- Nossa história -->
+    <section class="chapter story" id="historia" aria-labelledby="storyTitle">
+      <header class="chapter__head">
+        <h2 class="chapter__title" id="storyTitle">Nossa história</h2>
+        <p class="chapter__lead">Do primeiro dia até agora.</p>
+      </header>
+      <div class="story__body">
+        <div class="story__thread" aria-hidden="true"><i class="story__ink" id="storyInk"></i></div>
+        <ol class="story__list" id="storyList"></ol>
+      </div>
     </section>
 
-    <!-- Fotos: aparecem com 2+ fotos no config -->
-    <section class="prints" id="galeria" hidden aria-label="Fotos"></section>
+    <!-- Pilha de fotos -->
+    <section class="chapter photos" id="fotos" aria-labelledby="photosTitle" hidden>
+      <header class="chapter__head">
+        <h2 class="chapter__title" id="photosTitle">Algumas fotos nossas</h2>
+        <p class="chapter__lead">Arraste a foto de cima para o lado para ver a próxima.</p>
+      </header>
+      <div class="stack" id="stack" aria-live="polite"></div>
+      <div class="stack__nav">
+        <button type="button" class="round-btn" id="stackPrev" aria-label="Foto anterior">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>
+        </button>
+        <p class="stack__count" id="stackCount"></p>
+        <button type="button" class="round-btn" id="stackNext" aria-label="Próxima foto">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg>
+        </button>
+      </div>
+    </section>
 
-    <button class="again" id="again" type="button">Fechar a carta</button>
+    <!-- Bilhetes -->
+    <section class="chapter notes" id="bilhetes" aria-labelledby="notesTitle" hidden>
+      <header class="chapter__head">
+        <h2 class="chapter__title" id="notesTitle">Bilhetes</h2>
+        <p class="chapter__lead">Cada um tem um motivo pelo qual eu te amo.</p>
+      </header>
+      <div class="notes__stage" id="noteStage">
+        <div class="notes__pile" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="note" id="note" hidden>
+          <div class="note__half note__half--bottom"><div class="note__content"></div></div>
+          <div class="note__half note__half--top">
+            <div class="note__face note__face--in"><div class="note__content"></div></div>
+            <div class="note__face note__face--out"></div>
+          </div>
+        </div>
+      </div>
+      <div class="notes__actions">
+        <button type="button" class="pill-btn" id="noteBtn">Tirar um bilhete</button>
+        <p class="notes__count" id="noteCount"></p>
+      </div>
+    </section>
+
+    <footer class="end">
+      <p class="end__names hand"><span data-name-him>Gui</span> &amp; <span data-name-her>Anna</span></p>
+      <p class="end__since" id="endSince"></p>
+      <button class="again" id="again" type="button">Fechar a carta</button>
+    </footer>
   </main>
 
-  <button class="music" id="musicBtn" type="button" aria-label="Pausar música" hidden>
-    <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.2" height="14" rx="1"/><rect x="13.8" y="5" width="3.2" height="14" rx="1"/></svg>
-    <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+  <!-- Toca-discos -->
+  <button class="vinyl" id="musicBtn" type="button" aria-label="Pausar música" hidden>
+    <span class="vinyl__disc" aria-hidden="true"><span class="vinyl__label">G&amp;A</span></span>
+    <span class="vinyl__tag" id="musicTag"></span>
   </button>
   <audio id="audio" preload="auto" loop></audio>
 
-  <div class="lightbox" id="lightbox" hidden>
-    <button class="lightbox__btn lightbox__close" id="lbClose" type="button" aria-label="Fechar">×</button>
-    <button class="lightbox__btn lightbox__prev" id="lbPrev" type="button" aria-label="Foto anterior">‹</button>
-    <figure><img id="lbImg" alt=""><figcaption id="lbCap" class="hand"></figcaption></figure>
-    <button class="lightbox__btn lightbox__next" id="lbNext" type="button" aria-label="Próxima foto">›</button>
-  </div>
-
-  <script src="assets/js/config.js?v=11"></script>
-  <script src="assets/js/main.js?v=11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+  <script src="assets/js/config.js?v=12"></script>
+  <script src="assets/js/main.js?v=12"></script>
 </body>
 </html>

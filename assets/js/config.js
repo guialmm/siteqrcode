@@ -1,6 +1,9 @@
 /*
  * ============================================================
  *  TUDO QUE VOCÊ PRECISA EDITAR FICA AQUI.
+ *  Para ver as seções com conteúdo de exemplo, abra o site com ?demo no fim
+ *  do endereço (ex.: http://localhost:5510/?demo). O exemplo nunca aparece
+ *  no site normal.
  * ============================================================
  */
 window.CONFIG = {
@@ -13,23 +16,28 @@ window.CONFIG = {
   // Música de fundo: coloque o arquivo em assets/audio/
   musica: {
     arquivo: "assets/audio/musica.mp3",
-    titulo: "", // ex.: "Nome da música · Artista" (aparece no botão)
+    titulo: "", // ex.: "Nome da música · Artista" (aparece ao lado do disco)
     volume: 0.6,
   },
 
-  // Linha do tempo: a seção só aparece com 2 ou mais marcos.
-  // data no formato "AAAA-MM-DD"; foto é opcional.
+  // Nossa história. Os aniversários de namoro entram sozinhos;
+  // aqui você adiciona os momentos especiais. data = "AAAA-MM-DD", foto é opcional.
   marcos: [
     {
       data: "2022-05-16",
       titulo: "O começo de tudo",
-      texto: "O dia em que a nossa história começou.",
+      texto: "Às 19h30 do dia 16 de maio de 2022, a nossa história começou.",
       foto: "",
     },
   ],
 
-  // Galeria: a seção só aparece com 2 ou mais fotos.
+  // Pilha de fotos (a seção aparece com 2 fotos ou mais).
   fotos: [
     { src: "assets/img/casal.jpg", legenda: "" },
+  ],
+
+  // Bilhetes: cada um é um motivo. A seção aparece com 1 bilhete ou mais.
+  bilhetes: [
+    // "Porque você ...",
   ],
 };
