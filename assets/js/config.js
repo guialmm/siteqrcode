@@ -116,8 +116,6 @@ window.CONFIG = {
     "Eu te amo porque você é minha namorada e também a minha melhor amiga.",
     "Amo quando você segura a minha mão sem perceber.",
     "Com você eu aprendi que amor também é paciência.",
-    "Eu te amo porque você sabe pedir desculpas e também sabe aceitar as minhas.",
-    "Amo te ouvir falar de algo que você gosta muito. Seus olhos mudam.",
     "Eu te amo porque você faz qualquer lugar parecer casa.",
     "Amo que a gente tenha piadas que ninguém mais entende.",
     "Eu te amo porque você é gentil com todo mundo, até com quem não merece.",
