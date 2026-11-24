@@ -163,14 +163,14 @@
     }
     G.to("#storyInk", {
       scaleY: 1, ease: "none",
-      scrollTrigger: { trigger: ".story__body", start: "top 62%", end: "bottom 62%", scrub: 0.5 },
+      scrollTrigger: { trigger: ".story__body", start: "top 72%", end: "bottom 72%", scrub: 0.5 },
     });
     $$(".story__item").forEach((li) => {
       const text = li.querySelector(".story__text");
       const photo = li.querySelector(".photo");
       G.set(text, { opacity: 0.25 });
       ScrollTrigger.create({
-        trigger: li, start: "top 62%",
+        trigger: li, start: "top 72%",
         onEnter: () => { li.classList.add("is-passed"); G.to(text, { opacity: 1, duration: 0.6, ease: "power2.out" }); },
         onLeaveBack: () => { li.classList.remove("is-passed"); G.to(text, { opacity: 0.25, duration: 0.4 }); },
       });
@@ -271,12 +271,15 @@
     if (e.key === "ArrowRight") throwTop(1);
     if (e.key === "ArrowLeft") bringBack();
   });
-  if (cards.length) { stack.tabIndex = 0; stack.setAttribute("aria-label", "Pilha de fotos. Use as setas para trocar de foto."); layoutStack(0); }
+  if (cards.length) { stack.tabIndex = 0; stack.setAttribute("aria-label", "Pilha de fotos. Use as setas do teclado para trocar de foto."); layoutStack(0); }
 
   /* ============ bilhetes ============ */
   const note = $("#note");
   const noteTop = $(".note__half--top");
   const noteBtn = $("#noteBtn");
+  const stage = $("#noteStage");
+  const pile = $(".notes__pile");
+  pile.addEventListener("click", () => noteBtn.click());
   let noteOrder = [];
   let notePos = 0;
   let noteBusy = false;
@@ -291,7 +294,7 @@
     if (notePos >= noteOrder.length) {
       noteOrder = shuffle(noteOrder);
       notePos = 0;
-      $(".notes__pile").classList.remove("is-empty");
+      pile.classList.remove("is-empty");
     }
     const anim = !!G && !reduceMotion;
     if (!note.hidden && anim) {
@@ -300,15 +303,18 @@
     }
     const text = bilhetes[noteOrder[notePos]];
     $$(".note__content", note).forEach((el) => (el.textContent = text));
+    $("#noteLive").textContent = text;
     notePos++;
     $("#noteCount").textContent = `${notePos} de ${noteOrder.length}`;
     noteBtn.textContent = notePos >= noteOrder.length ? "Ler de novo" : "Tirar outro bilhete";
-    if (notePos >= noteOrder.length) $(".notes__pile").classList.add("is-empty");
+    if (notePos >= noteOrder.length) pile.classList.add("is-empty");
     note.hidden = false;
 
-    if (!anim) { noteBusy = false; return; }
-    const stageH = $("#noteStage").offsetHeight;
-    G.set(note, { x: 0, y: stageH - note.offsetHeight * 0.5 - 30, scale: 0.42, rotation: -6, opacity: 1 });
+    if (!anim) { stage.classList.remove("is-idle"); noteBusy = false; return; }
+    // o bilhete sai do centro do maço, onde quer que ele esteja agora
+    const pr = pile.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    stage.classList.remove("is-idle");
+    G.set(note, { x: 0, y: pr.top + pr.height / 2 - sr.top - note.offsetHeight / 2, scale: 0.42, rotation: -6, opacity: 1 });
     G.set(noteTop, { rotationX: -180 });
     play("paper", 0.25);
     const tl = G.timeline({ onComplete: () => (noteBusy = false) });
@@ -430,6 +436,7 @@
   const sheet = $("#sheet");
   const waapi = (el, kf, opt) => el.animate(kf, { fill: "forwards", ...opt });
   let opening = false;
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) $("#hint").textContent = "Clique no selo para abrir";
 
   if (!reduceMotion && matchMedia("(hover: hover)").matches) {
     addEventListener("pointermove", (e) => {
@@ -546,7 +553,8 @@
   let scrollReady = false;
   function revealDesk() {
     document.body.classList.remove("is-sealed");
-    desk.removeAttribute("aria-hidden");
+    desk.inert = false;
+    sheet.focus({ preventScroll: true });
     desk.classList.add("is-in");
     if (!scrollReady) {
       scrollReady = true;

@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css?v=12">
+  <link rel="stylesheet" href="assets/css/styles.css?v=13">
 </head>
 
 <body class="is-sealed">
@@ -56,8 +56,8 @@
     <p class="intro__hint" id="hint">Toque no selo para abrir</p>
   </div>
 
-  <main class="desk" id="desk" aria-hidden="true">
-    <article class="sheet" id="sheet">
+  <main class="desk" id="desk" inert>
+    <article class="sheet" id="sheet" tabindex="-1" aria-label="Carta">
       <p class="sheet__date" id="today"></p>
 
       <h1 class="salutation hand"><span data-name-her>Anna</span>,</h1>
@@ -100,14 +100,14 @@
     <section class="chapter photos" id="fotos" aria-labelledby="photosTitle" hidden>
       <header class="chapter__head">
         <h2 class="chapter__title" id="photosTitle">Algumas fotos nossas</h2>
-        <p class="chapter__lead">Arraste a foto de cima para o lado para ver a próxima.</p>
+        <p class="chapter__lead">Arraste a foto para o lado para ver a próxima.</p>
       </header>
-      <div class="stack" id="stack" aria-live="polite"></div>
+      <div class="stack" id="stack" role="group"></div>
       <div class="stack__nav">
         <button type="button" class="round-btn" id="stackPrev" aria-label="Foto anterior">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>
         </button>
-        <p class="stack__count" id="stackCount"></p>
+        <p class="stack__count" id="stackCount" aria-live="polite"></p>
         <button type="button" class="round-btn" id="stackNext" aria-label="Próxima foto">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg>
         </button>
@@ -120,9 +120,9 @@
         <h2 class="chapter__title" id="notesTitle">Bilhetes</h2>
         <p class="chapter__lead">Cada um tem um motivo pelo qual eu te amo.</p>
       </header>
-      <div class="notes__stage" id="noteStage">
+      <div class="notes__stage is-idle" id="noteStage">
         <div class="notes__pile" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div class="note" id="note" hidden>
+        <div class="note" id="note" aria-hidden="true" hidden>
           <div class="note__half note__half--bottom"><div class="note__content"></div></div>
           <div class="note__half note__half--top">
             <div class="note__face note__face--in"><div class="note__content"></div></div>
@@ -130,6 +130,7 @@
           </div>
         </div>
       </div>
+      <p class="sr-only" id="noteLive" aria-live="polite"></p>
       <div class="notes__actions">
         <button type="button" class="pill-btn" id="noteBtn">Tirar um bilhete</button>
         <p class="notes__count" id="noteCount"></p>
@@ -153,7 +154,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
-  <script src="assets/js/config.js?v=12"></script>
-  <script src="assets/js/main.js?v=12"></script>
+  <script src="assets/js/config.js?v=13"></script>
+  <script src="assets/js/main.js?v=13"></script>
 </body>
 </html>
