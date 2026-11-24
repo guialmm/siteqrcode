@@ -4,132 +4,110 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gui & Anna</title>
-  <meta name="description" content="Nossa história, contada segundo a segundo.">
-  <meta name="theme-color" content="#0d0708">
+  <meta name="description" content="Uma carta para a Anna.">
+  <meta name="theme-color" content="#3d0f18">
 
   <meta property="og:title" content="Gui & Anna">
-  <meta property="og:description" content="Nossa história, contada segundo a segundo.">
+  <meta property="og:description" content="Uma carta para a Anna.">
   <meta property="og:image" content="https://guialmm.github.io/siteqrcode/assets/img/casal.jpg">
   <meta property="og:type" content="website">
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%23b3243a' d='M16 28s-11-6.6-11-14.2C5 9.4 8.2 6 12 6c2 0 3.2.9 4 2 .8-1.1 2-2 4-2 3.8 0 7 3.4 7 7.8C27 21.4 16 28 16 28z'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%238e1b2c'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23b8414f' stroke-width='1.2'/></svg>">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Pinyon+Script&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css?v=9">
+  <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css?v=10">
 </head>
 
-<body class="is-locked">
+<body class="is-sealed">
 
-  <!-- Tela de abertura: o toque do usuário libera a música no celular -->
-  <div class="gate" id="gate" role="dialog" aria-label="Abertura">
-    <div class="gate__inner">
-      <p class="gate__eyebrow">uma surpresa para</p>
-      <h1 class="gate__name" data-name-her>Anna</h1>
-      <button class="gate__btn" id="openBtn" type="button">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.5-9.6-9.3C.9 8.2 3 4.5 6.6 4.5c2.1 0 3.6 1.1 4.4 2.4.8-1.3 2.3-2.4 4.4-2.4 3.6 0 5.7 3.7 4.2 7.2C19.5 16.5 12 21 12 21z"/></svg>
-        <span>Abrir</span>
+  <!-- Abertura: envelope lacrado -->
+  <div class="intro" id="intro">
+    <div class="envelope" id="envelope">
+      <div class="envelope__back"></div>
+      <div class="envelope__letter" aria-hidden="true">
+        <span class="hand" data-name-her>Anna</span>,
+      </div>
+      <div class="envelope__pocket" aria-hidden="true">
+        <i class="pocket-l"></i><i class="pocket-r"></i><i class="pocket-b"></i>
+        <span class="envelope__to hand">para <span data-name-her>Anna</span></span>
+      </div>
+      <div class="envelope__flap" aria-hidden="true"><i></i></div>
+
+      <button class="seal" id="seal" type="button" aria-label="Abrir a carta">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <defs>
+            <radialGradient id="wax" cx="38%" cy="32%" r="75%">
+              <stop offset="0" stop-color="#b3354a"/>
+              <stop offset=".55" stop-color="#8e1b2c"/>
+              <stop offset="1" stop-color="#5e0f1c"/>
+            </radialGradient>
+          </defs>
+          <path fill="url(#wax)" d="M60 4c9 0 12 6 20 8s15-1 20 6 2 14 6 21 10 11 9 21-8 12-10 20 3 15-4 21-14 2-21 6-11 10-20 9-12-8-20-10-15 3-21-4-2-14-6-21-10-11-9-21 8-12 10-20-3-15 4-21 14-2 21-6 11-9 20-9z"/>
+          <circle cx="60" cy="60" r="37" fill="none" stroke="#5e0f1c" stroke-width="2" opacity=".7"/>
+          <circle cx="60" cy="60" r="34" fill="none" stroke="#c4566a" stroke-width="1" opacity=".45"/>
+          <text x="60" y="71" text-anchor="middle" class="seal__mono">G<tspan dx="1" dy="-2" class="seal__amp">&amp;</tspan><tspan dx="1" dy="2">A</tspan></text>
+        </svg>
       </button>
-      <p class="gate__hint">aumenta o som 🎧</p>
     </div>
+    <p class="intro__hint" id="hint">Toque no selo para abrir</p>
   </div>
 
-  <canvas class="petals" id="petals" aria-hidden="true"></canvas>
+  <main class="desk" id="desk" aria-hidden="true">
+    <article class="sheet">
+      <p class="sheet__date" id="today"></p>
 
-  <!-- Player flutuante -->
+      <h1 class="salutation hand"><span data-name-her>Anna</span>,</h1>
+
+      <p>Há exatamente <span id="spanShort"></span> começamos essa linda jornada juntos.</p>
+
+      <figure class="print">
+        <img src="assets/img/casal.jpg" alt="Gui e Anna se beijando, ela no colo dele, de vestido vermelho" width="960" height="1280">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      </figure>
+
+      <p>Cada segundo que esse contador marca é um lembrete de quanto tempo venho sendo a pessoa mais feliz do mundo ao seu lado:</p>
+
+      <p class="clock" id="clock" aria-live="off">
+        <span class="clock__row"><b data-u="anos"></b> <em data-l="anos"></em> <b data-u="meses"></b> <em data-l="meses"></em> <b data-u="dias"></b> <em data-l="dias"></em></span>
+        <span class="clock__row clock__row--time"><b data-u="horas"></b><em>h</em> <b data-u="minutos"></b><em>min</em> <b data-u="segundos"></b><em>s</em></span>
+      </p>
+
+      <p>Que venham muitos anos, meses, dias, horas e minutos para continuarmos escrevendo a nossa história de amor.</p>
+
+      <p class="closing">Com todo o meu amor,</p>
+      <p class="signature hand" data-name-him>Gui</p>
+
+      <p class="ps"><span class="ps__mark">P.S.</span> Até agora foram <span id="psDays"></span> dias, <span id="psMonths"></span> mesversários e <span id="psMoons"></span> luas cheias. Faltam <span id="psLeft"></span> para os nossos <span id="psYears"></span> anos, no dia <span id="psDate"></span>.</p>
+    </article>
+
+    <!-- Linha do tempo: aparece com 2+ marcos no config -->
+    <section class="sheet sheet--story" id="historia" hidden>
+      <h2 class="hand">Nossa história</h2>
+      <ol class="story" id="story"></ol>
+    </section>
+
+    <!-- Fotos: aparecem com 2+ fotos no config -->
+    <section class="prints" id="galeria" hidden aria-label="Fotos"></section>
+
+    <button class="again" id="again" type="button">Fechar a carta</button>
+  </main>
+
   <button class="music" id="musicBtn" type="button" aria-label="Pausar música" hidden>
-    <span class="music__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-    <span class="music__label" id="musicLabel"></span>
+    <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5" width="3.2" height="14" rx="1"/><rect x="13.8" y="5" width="3.2" height="14" rx="1"/></svg>
+    <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
   </button>
   <audio id="audio" preload="auto" loop></audio>
 
-  <main>
-    <!-- HERO -->
-    <header class="hero">
-      <div class="hero__frame reveal">
-        <img src="assets/img/casal.jpg" alt="Gui e Anna" class="hero__photo" width="960" height="1280">
-      </div>
-      <div class="hero__text">
-        <p class="eyebrow reveal">desde <span id="sinceLabel"></span></p>
-        <h1 class="hero__title reveal"><span data-name-him>Gui</span> <em>&</em> <span data-name-her>Anna</span></h1>
-        <p class="hero__lead reveal">Cada segundo desde aquele dia, contado aqui.</p>
-      </div>
-      <a href="#tempo" class="scroll-cue" aria-label="Rolar para baixo"><span></span></a>
-    </header>
-
-    <!-- CONTADOR -->
-    <section class="section" id="tempo">
-      <p class="eyebrow reveal">juntos há</p>
-      <div class="counter reveal" id="counter">
-        <div class="unit"><b data-u="anos">0</b><span>anos</span></div>
-        <div class="unit"><b data-u="meses">0</b><span>meses</span></div>
-        <div class="unit"><b data-u="dias">0</b><span>dias</span></div>
-        <div class="unit"><b data-u="horas">0</b><span>horas</span></div>
-        <div class="unit"><b data-u="minutos">0</b><span>minutos</span></div>
-        <div class="unit"><b data-u="segundos">0</b><span>segundos</span></div>
-      </div>
-
-      <div class="stats reveal">
-        <div class="stat"><b id="statDays">0</b><span>dias ao seu lado</span></div>
-        <div class="stat"><b id="statMonths">0</b><span>mesversários</span></div>
-        <div class="stat"><b id="statMoons">0</b><span>luas cheias juntos</span></div>
-        <div class="stat"><b id="statWeekends">0</b><span>fins de semana</span></div>
-      </div>
-    </section>
-
-    <!-- PRÓXIMO ANIVERSÁRIO -->
-    <section class="section section--tint">
-      <p class="eyebrow reveal">contagem regressiva</p>
-      <h2 class="title reveal">Faltam <span id="nextDays">0</span> dias<br>para os nossos <span id="nextYears">0</span> anos</h2>
-      <div class="progress reveal" aria-hidden="true"><div class="progress__bar" id="nextBar"></div></div>
-      <p class="muted reveal" id="nextDate"></p>
-    </section>
-
-    <!-- LINHA DO TEMPO (aparece quando houver 2+ marcos) -->
-    <section class="section" id="historia" hidden>
-      <p class="eyebrow reveal">nossa história</p>
-      <h2 class="title reveal">Momentos que eu nunca vou esquecer</h2>
-      <ol class="timeline" id="timeline"></ol>
-    </section>
-
-    <!-- GALERIA (aparece quando houver 2+ fotos) -->
-    <section class="section" id="galeria" hidden>
-      <p class="eyebrow reveal">nós</p>
-      <h2 class="title reveal">Pedacinhos da gente</h2>
-      <div class="gallery" id="gallery"></div>
-    </section>
-
-    <!-- CARTA -->
-    <section class="section">
-      <p class="eyebrow reveal">pra você</p>
-      <article class="letter reveal">
-        <p class="letter__hi"><span data-name-her>Anna</span>,</p>
-        <p>Há exatamente <strong id="letterSpan"></strong>, começamos essa linda jornada juntos.</p>
-        <p>Cada segundo que o contador marca é um lembrete de quanto tempo venho sendo a pessoa mais feliz do mundo ao seu lado.</p>
-        <p>Que venham muitos anos, meses, dias, horas e minutos para continuarmos escrevendo a nossa história de amor.</p>
-        <p class="letter__sign">Com todo o meu amor,<br><span data-name-him>Gui</span></p>
-      </article>
-    </section>
-
-    <footer class="footer">
-      <p><span data-name-him>Gui</span> <span class="heart">♥</span> <span data-name-her>Anna</span></p>
-      <small>desde <span id="footerSince"></span></small>
-    </footer>
-  </main>
-
-  <!-- Lightbox -->
   <div class="lightbox" id="lightbox" hidden>
-    <button class="lightbox__close" id="lbClose" type="button" aria-label="Fechar">×</button>
-    <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Anterior">‹</button>
-    <figure>
-      <img id="lbImg" alt="">
-      <figcaption id="lbCap"></figcaption>
-    </figure>
-    <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Próxima">›</button>
+    <button class="lightbox__btn lightbox__close" id="lbClose" type="button" aria-label="Fechar">×</button>
+    <button class="lightbox__btn lightbox__prev" id="lbPrev" type="button" aria-label="Foto anterior">‹</button>
+    <figure><img id="lbImg" alt=""><figcaption id="lbCap" class="hand"></figcaption></figure>
+    <button class="lightbox__btn lightbox__next" id="lbNext" type="button" aria-label="Próxima foto">›</button>
   </div>
 
-  <script src="assets/js/config.js?v=9"></script>
-  <script src="assets/js/main.js?v=9"></script>
+  <script src="assets/js/config.js?v=10"></script>
+  <script src="assets/js/main.js?v=10"></script>
 </body>
 </html>
