@@ -153,7 +153,7 @@
     for (const m of marcos) {
       const d = new Date(m.data + "T12:00:00");
       const prev = map.get(key(d));
-      map.set(key(d), { ...prev, date: d, titulo: m.titulo, texto: m.texto, foto: m.foto, placeholder: m.placeholder, futuro: false });
+      map.set(key(d), { ...prev, date: d, titulo: m.titulo, texto: m.texto, foto: m.foto, deitada: m.deitada, placeholder: m.placeholder, futuro: false });
     }
     return [...map.values()].sort((a, b) => a.date - b.date);
   })();
@@ -170,7 +170,7 @@
     if (m.foto || m.placeholder) {
       const media = document.createElement("div");
       media.className = "story__media";
-      const fig = makePhoto({ src: m.foto, placeholder: m.placeholder }, m.titulo);
+      const fig = makePhoto({ src: m.foto, deitada: m.deitada, placeholder: m.placeholder }, m.titulo);
       fig.style.setProperty("--r", `${i % 2 ? -2.4 : 2.1}deg`);
       fig.dataset.r = i % 2 ? -2.4 : 2.1;
       media.appendChild(fig);

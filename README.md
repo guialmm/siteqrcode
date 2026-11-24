@@ -24,7 +24,7 @@ O exemplo nunca aparece no site normal.
 
 ## Colocar uma foto nova
 
-As fotos da pilha ficam em `assets/img/fotos/`, já recortadas e leves:
+As fotos da pilha ficam em `assets/img/fotos/`, com o nome pela data (`2022-05-16.jpg`; `-2` se houver outra no mesmo dia), já recortadas e leves:
 
 - em pé: 900 × 1125 px (4:5);
 - deitada: 1100 × 825 px (4:3), com `deitada: true` no `config.js`;
