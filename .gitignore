@@ -3,3 +3,6 @@ assets/img/WhatsApp Image*
 # cópias soltas salvas do chat
 assets/img/image-*
 .DS_Store
+# pesquisa (não vai para o site)
+research_notes/
+reports/
