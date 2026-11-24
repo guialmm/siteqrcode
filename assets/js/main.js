@@ -44,11 +44,11 @@
     if (reduceMotion) return;
     // a saudação é escrita quando a carta assenta na mesa
     const onStroke = (i, ms) => play("pen", ms);
-    setTimeout(() => inkHello?.play({ onStroke }), 650);
+    setTimeout(() => inkHello?.play({ speed: 7, lift: 32, onStroke }), 450);
     // a assinatura, quando ela chega ao fim da carta
     if (inkSign && "IntersectionObserver" in window) {
       const io = new IntersectionObserver((es) => {
-        if (es.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(() => inkSign.play({ speed: 3.6, onStroke }), 250); }
+        if (es.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(() => inkSign.play({ speed: 6, lift: 32, onStroke }), 250); }
       }, { threshold: 1, rootMargin: "0px 0px -12% 0px" });
       io.observe(inkSign.el);
     } else inkSign?.done();
@@ -494,13 +494,34 @@
     vinyl.classList.toggle("is-paused", p);
     vinyl.setAttribute("aria-label", p ? "Tocar música" : "Pausar música");
   };
+  // Na primeira vez a música começa em C.musica.comecoEm (ex.: o refrão);
+  // ao terminar, o "loop" do <audio> volta para 0:00 e ela segue inteira em repetição.
+  const startAt = (() => {
+    const v = C.musica?.comecoEm;
+    if (typeof v === "number") return v;
+    const m = String(v || "").trim().match(/^(?:(\d+):)?(\d+(?:\.\d+)?)$/);
+    return m ? (+m[1] || 0) * 60 + +m[2] : 0;
+  })();
+  let seeked = !startAt;
+  function seekToStart() {
+    if (seeked) return;
+    const go = () => {
+      if (seeked) return;
+      seeked = true;
+      const end = isFinite(audio.duration) ? audio.duration - 1 : Infinity;
+      try { audio.currentTime = Math.max(0, Math.min(startAt, end)); } catch {}
+    };
+    audio.readyState >= 1 ? go() : audio.addEventListener("loadedmetadata", go, { once: true });
+  }
   function primeMusic() {
     if (!audio.src) return;
+    seekToStart();
     audio.volume = 0;
     audio.play().then(() => audio.pause()).catch(() => {});
   }
   async function startMusic() {
     try {
+      seekToStart();
       audio.volume = 0;
       await audio.play();
       vinyl.hidden = false;

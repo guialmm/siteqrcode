@@ -16,7 +16,10 @@ window.CONFIG = {
   // Música de fundo: coloque o arquivo em assets/audio/
   musica: {
     arquivo: "assets/audio/musica.mp3",
-    titulo: "", // ex.: "Nome da música · Artista" (aparece ao lado do disco)
+    titulo: "The Night We Met · Lord Huron", // aparece ao lado do disco
+    // Onde a música começa na primeira vez (minuto:segundo), ex.: "1:00" para cair no refrão.
+    // Quando ela acaba, recomeça do 0:00 e fica repetindo inteira. Vazio = começa do início.
+    comecoEm: "",
     volume: 0.6,
   },
 
