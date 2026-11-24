@@ -43,11 +43,12 @@
   function startInk() {
     if (reduceMotion) return;
     // a saudação é escrita quando a carta assenta na mesa
-    setTimeout(() => inkHello?.play(), 650);
+    const onStroke = (i, ms) => play("pen", ms);
+    setTimeout(() => inkHello?.play({ onStroke }), 650);
     // a assinatura, quando ela chega ao fim da carta
     if (inkSign && "IntersectionObserver" in window) {
       const io = new IntersectionObserver((es) => {
-        if (es.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(() => inkSign.play({ speed: 3.6 }), 250); }
+        if (es.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(() => inkSign.play({ speed: 3.6, onStroke }), 250); }
       }, { threshold: 1, rootMargin: "0px 0px -12% 0px" });
       io.observe(inkSign.el);
     } else inkSign?.done();
@@ -347,8 +348,9 @@
     crack: [0, 0.36], flap: [0.61, 0.67], slide: [1.53, 0.78],
     fold1: [2.56, 0.54], fold2: [3.35, 0.55], fold3: [4.15, 0.57],
     whisk1: [4.97, 0.48], whisk2: [5.7, 0.35], grab: [6.3, 0.52],
+    pen: [7.12, 2.45], // pena raspando no papel, trecho contínuo
   };
-  const sfxBytes = fetch("assets/audio/efeitos.mp3?v=1").then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+  const sfxBytes = fetch("assets/audio/efeitos.mp3?v=2").then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
   let sfxBuf = null, sfxLoading = null;
   function loadSfx(ctx) {
     if (sfxLoading) return;
@@ -367,6 +369,25 @@
     g.gain.value = gain;
     src.connect(g).connect(ctx.destination);
     src.start(ctx.currentTime + at, off, dur);
+    return true;
+  }
+  // um traço da escrita: fatia aleatória da gravação da pena, do tamanho do traço,
+  // com entrada e saída suaves (a pena encosta e levanta do papel)
+  function penStroke(ctx, ms) {
+    if (!sfxBuf) return false;
+    const [off, len] = SPRITE.pen;
+    const d = Math.min(ms / 1000, len), t = ctx.currentTime;
+    const src = ctx.createBufferSource();
+    src.buffer = sfxBuf;
+    src.playbackRate.value = vary(0.07);
+    const g = ctx.createGain();
+    const peak = 0.5 * vary(0.15);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(peak, t + Math.min(0.04, d * 0.25));
+    g.gain.setValueAtTime(peak, t + d * 0.7);
+    g.gain.linearRampToValueAtTime(0, t + d);
+    src.connect(g).connect(ctx.destination);
+    src.start(t, off + Math.random() * (len - d), d + 0.02);
     return true;
   }
   const pick = (...names) => names[Math.floor(Math.random() * names.length)];
@@ -418,6 +439,7 @@
       }
       burst(ctx, { at: 0.5, dur: 0.14, type: "lowpass", freq: 380, Q: 0.6, gain: 0.35 });
     },
+    pen(ctx, ms) { burst(ctx, { dur: ms / 1000, freq: 3200, Q: 0.7, gain: 0.05, attack: 0.03 }); },
     whoosh(ctx) { burst(ctx, { dur: 0.7, type: "lowpass", freq: 700, Q: 0.4, gain: 0.22, attack: 0.25 }); },
     whisk(ctx) { burst(ctx, { dur: 0.3, freq: 2400, Q: 0.5, gain: 0.12, attack: 0.08 }); },
     slide(ctx) {
@@ -441,6 +463,7 @@
     },
     whisk: (ctx) => sample(ctx, pick("whisk1", "whisk2"), { gain: 0.7, rate: vary(0.08) }),
     slide: (ctx) => sample(ctx, "slide", { gain: 0.8, rate: 0.92 }),
+    pen: penStroke,
   };
   function play(name, ...a) {
     const ctx = audioCtx();

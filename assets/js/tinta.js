@@ -72,12 +72,13 @@ window.Ink = (() => {
       el: svg,
       done: finish,
       // speed em unidades da fonte por milissegundo
-      async play({ speed = 4.4, lift = 55 } = {}) {
+      async play({ speed = 4.4, lift = 55, onStroke } = {}) {
         if (started) return;
         started = true;
         for (let i = 0; i < strokes.length; i++) {
           const L = lens[i];
           const dur = Math.max(110, L / speed);
+          onStroke?.(i, dur);
           await strokes[i].animate(
             [{ strokeDashoffset: L }, { strokeDashoffset: 0 }],
             { duration: dur, easing: "cubic-bezier(.4,.1,.45,1)", fill: "forwards" }
