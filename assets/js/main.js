@@ -111,9 +111,9 @@
   setInterval(tick, 1000);
 
   /* ============ foto revelada ============ */
-  function makePhoto(p, alt) {
+  function makePhoto(p, alt, { defer = false } = {}) {
     const fig = document.createElement("figure");
-    fig.className = "photo";
+    fig.className = p.deitada ? "photo photo--wide" : "photo";
     if (p.placeholder) {
       const ph = document.createElement("div");
       ph.className = "photo__ph";
@@ -121,7 +121,8 @@
       fig.appendChild(ph);
     } else {
       const img = document.createElement("img");
-      img.src = p.src || p.foto;
+      // na pilha, a foto só carrega quando chega perto do topo (ver layoutStack)
+      if (defer) img.dataset.src = p.src || p.foto; else img.src = p.src || p.foto;
       img.alt = p.legenda || alt || "";
       img.loading = "lazy";
       img.decoding = "async";
@@ -214,7 +215,7 @@
     $("#fotos").hidden = false;
     const tilts = [-3.2, 2.6, -1.4, 3.6, -2.4, 1.8, -3.8, 2.2];
     fotos.forEach((p, i) => {
-      const fig = makePhoto(p, `Foto ${i + 1}`);
+      const fig = makePhoto(p, `Foto ${i + 1}`, { defer: true });
       fig.dataset.r = tilts[i % tilts.length];
       stack.appendChild(fig);
       cards.push(fig);
@@ -239,6 +240,11 @@
         opacity: pos < 4 ? 1 : 0,
       }, dur);
       el.setAttribute("aria-hidden", pos === 0 ? "false" : "true");
+    });
+    // carrega as próximas fotos (as de cima e as que estão logo atrás), e a última, para o "voltar"
+    [...order.slice(0, 5), order[order.length - 1]].forEach((idx) => {
+      const img = cards[idx]?.querySelector("img[data-src]");
+      if (img) { img.src = img.dataset.src; img.removeAttribute("data-src"); }
     });
     drags.forEach((d, i) => (i === order[0] ? d.enable() : d.disable()));
     if (cards.length) $("#stackCount").textContent = `${order[0] + 1} de ${cards.length}`;
@@ -293,6 +299,22 @@
     if (e.key === "ArrowRight") throwTop(1);
     if (e.key === "ArrowLeft") bringBack();
   });
+  // legendas longas: diminui a letra até caber numa linha; se nem assim, quebra em duas
+  function fitCaptions() {
+    cards.forEach((fig) => {
+      const cap = fig.querySelector("figcaption");
+      if (!cap || !cap.textContent || !cap.clientWidth) return;
+      cap.style.fontSize = ""; cap.classList.remove("is-two");
+      let size = parseFloat(getComputedStyle(cap).fontSize);
+      while (cap.scrollWidth > cap.clientWidth + 1 && size > 16) cap.style.fontSize = `${--size}px`;
+      if (cap.scrollWidth > cap.clientWidth + 1) { cap.style.fontSize = ""; cap.classList.add("is-two"); }
+    });
+  }
+  if (cards.length && "ResizeObserver" in window) {
+    let fitW = 0;
+    new ResizeObserver(([e]) => { const w = Math.round(e.contentRect.width); if (w && w !== fitW) { fitW = w; fitCaptions(); } }).observe(stack);
+    document.fonts?.ready.then(fitCaptions);
+  }
   if (cards.length) { stack.tabIndex = 0; stack.setAttribute("aria-label", "Pilha de fotos. Use as setas do teclado para trocar de foto."); layoutStack(0); }
 
   /* ============ bilhetes ============ */
