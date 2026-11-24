@@ -77,7 +77,7 @@ window.Ink = (() => {
         started = true;
         for (let i = 0; i < strokes.length; i++) {
           const L = lens[i];
-          const dur = Math.max(110, L / speed);
+          const dur = Math.max(80, L / speed);
           onStroke?.(i, dur);
           await strokes[i].animate(
             [{ strokeDashoffset: L }, { strokeDashoffset: 0 }],
