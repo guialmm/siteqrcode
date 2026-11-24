@@ -323,11 +323,43 @@
       .to(noteTop, { rotationX: 0, duration: 0.85, ease: "power2.inOut" }, "-=0.15");
   });
 
-  /* ============ efeitos sonoros (sintetizados) ============ */
+  /* ============ efeitos sonoros ============ */
+  // Gravações reais (Pixabay, licença livre) num só arquivo: [início, duração] em segundos.
+  // Se o arquivo não carregar, cada efeito cai no som sintetizado mais abaixo.
+  const SPRITE = {
+    crack: [0, 0.36], flap: [0.61, 0.67], slide: [1.53, 0.78],
+    fold1: [2.56, 0.54], fold2: [3.35, 0.55], fold3: [4.15, 0.57],
+    whisk1: [4.97, 0.48], whisk2: [5.7, 0.35], grab: [6.3, 0.52],
+  };
+  const sfxBytes = fetch("assets/audio/efeitos.mp3?v=1").then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+  let sfxBuf = null, sfxLoading = null;
+  function loadSfx(ctx) {
+    if (sfxLoading) return;
+    sfxLoading = sfxBytes
+      .then((b) => b && new Promise((res) => ctx.decodeAudioData(b, res, () => res(null))))
+      .then((buf) => (sfxBuf = buf));
+  }
+  const vary = (n) => 1 + (Math.random() * 2 - 1) * n;
+  function sample(ctx, name, { gain = 1, at = 0, rate = vary(0.04) } = {}) {
+    if (!sfxBuf) return false;
+    const [off, dur] = SPRITE[name];
+    const src = ctx.createBufferSource();
+    src.buffer = sfxBuf;
+    src.playbackRate.value = rate;
+    const g = ctx.createGain();
+    g.gain.value = gain;
+    src.connect(g).connect(ctx.destination);
+    src.start(ctx.currentTime + at, off, dur);
+    return true;
+  }
+  const pick = (...names) => names[Math.floor(Math.random() * names.length)];
+  let lastFold = "";
+
   let ac = null;
   function audioCtx() {
     if (!ac) { const A = window.AudioContext || window.webkitAudioContext; if (A) ac = new A(); }
     if (ac && ac.state === "suspended") ac.resume();
+    if (ac) loadSfx(ac);
     return ac;
   }
   let noise = null;
@@ -376,7 +408,28 @@
       burst(ctx, { at: 0.1, dur: 0.8, type: "highpass", freq: 4000, Q: 0.3, gain: 0.05, attack: 0.3 });
     },
   };
-  function play(name, ...a) { const ctx = audioCtx(); if (ctx) sfx[name](ctx, ...a); }
+  // efeito -> gravação; retorna false para cair no sintetizado
+  const real = {
+    crack(ctx) {
+      if (!sample(ctx, "crack", { rate: vary(0.03) })) return false;
+      burst(ctx, { dur: 0.16, type: "lowpass", freq: 220, Q: 0.7, gain: 0.45 }); // peso da cera
+      return true;
+    },
+    paper: (ctx, len) => sample(ctx, len && len < 0.4 ? "grab" : "flap", { gain: 0.85 }),
+    fold(ctx) {
+      let n;
+      do n = pick("fold1", "fold2", "fold3"); while (n === lastFold);
+      lastFold = n;
+      return sample(ctx, n, { gain: 0.8 });
+    },
+    whisk: (ctx) => sample(ctx, pick("whisk1", "whisk2"), { gain: 0.7, rate: vary(0.08) }),
+    slide: (ctx) => sample(ctx, "slide", { gain: 0.8, rate: 0.92 }),
+  };
+  function play(name, ...a) {
+    const ctx = audioCtx();
+    if (!ctx) return;
+    if (!(real[name] && real[name](ctx, ...a))) sfx[name](ctx, ...a);
+  }
 
   /* ============ música (toca-discos) ============ */
   const audio = $("#audio");
