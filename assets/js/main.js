@@ -348,9 +348,9 @@
     crack: [0, 0.36], flap: [0.61, 0.67], slide: [1.53, 0.78],
     fold1: [2.56, 0.54], fold2: [3.35, 0.55], fold3: [4.15, 0.57],
     whisk1: [4.97, 0.48], whisk2: [5.7, 0.35], grab: [6.3, 0.52],
-    pen: [7.12, 2.45], // pena raspando no papel, trecho contínuo
+    pen: [7.1, 3.9], // lápis deslizando no papel, trecho contínuo
   };
-  const sfxBytes = fetch("assets/audio/efeitos.mp3?v=2").then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+  const sfxBytes = fetch("assets/audio/efeitos.mp3?v=3").then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
   let sfxBuf = null, sfxLoading = null;
   function loadSfx(ctx) {
     if (sfxLoading) return;
@@ -371,15 +371,15 @@
     src.start(ctx.currentTime + at, off, dur);
     return true;
   }
-  // um traço da escrita: fatia aleatória da gravação da pena, do tamanho do traço,
-  // com entrada e saída suaves (a pena encosta e levanta do papel)
+  // um traço da escrita: fatia aleatória da gravação do lápis, do tamanho do traço,
+  // com entrada e saída suaves (o lápis encosta e levanta do papel)
   function penStroke(ctx, ms) {
     if (!sfxBuf) return false;
     const [off, len] = SPRITE.pen;
     const d = Math.min(ms / 1000, len), t = ctx.currentTime;
     const src = ctx.createBufferSource();
     src.buffer = sfxBuf;
-    src.playbackRate.value = vary(0.07);
+    src.playbackRate.value = vary(0.03);
     const g = ctx.createGain();
     const peak = 0.5 * vary(0.15);
     g.gain.setValueAtTime(0, t);
