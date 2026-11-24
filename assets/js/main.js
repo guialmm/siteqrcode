@@ -171,6 +171,15 @@
         burst(ctx, { at: s, dur: 0.05 + Math.random() * 0.08, freq: 1500 + Math.random() * 3000, Q: 0.6 + Math.random(), gain: 0.05 + Math.random() * 0.12 });
       }
     },
+    fold(ctx) {
+      for (let s = 0; s < 0.42; s += 0.02 + Math.random() * 0.04) {
+        burst(ctx, { at: s, dur: 0.04 + Math.random() * 0.07, freq: 900 + Math.random() * 2600, Q: 0.7 + Math.random(), gain: 0.06 + Math.random() * 0.14 });
+      }
+      burst(ctx, { at: 0.5, dur: 0.14, type: "lowpass", freq: 380, Q: 0.6, gain: 0.35 }); // papel assentando
+    },
+    whoosh(ctx) {
+      burst(ctx, { dur: 0.7, type: "lowpass", freq: 700, Q: 0.4, gain: 0.22, attack: 0.25 });
+    },
     slide(ctx) {
       burst(ctx, { dur: 1.0, freq: 1100, Q: 0.5, gain: 0.16, attack: 0.35 });
       burst(ctx, { at: 0.1, dur: 0.8, type: "highpass", freq: 4000, Q: 0.3, gain: 0.05, attack: 0.3 });
@@ -215,50 +224,207 @@
   });
 
   /* ---------- abrir a carta ---------- */
+  history.scrollRestoration = "manual";
   const intro = $("#intro");
   const env = $("#envelope");
+  const tilt = $("#tilt");
+  const seal = $("#seal");
+  const envLetter = $("#envLetter");
   const desk = $("#desk");
+  const sheet = $("#sheet");
+  const anim = (el, kf, opt) => el.animate(kf, { fill: "forwards", ...opt });
   let busy = false;
 
-  $("#seal").addEventListener("click", async () => {
+  // o envelope inclina acompanhando o mouse
+  if (!reduceMotion && matchMedia("(hover: hover)").matches) {
+    addEventListener("pointermove", (e) => {
+      if (busy) return;
+      const x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5;
+      tilt.style.transform = `rotateX(${(-y * 12).toFixed(2)}deg) rotateY(${(x * 14).toFixed(2)}deg)`;
+    });
+  }
+
+  function breakSeal() {
+    const svg = seal.querySelector("svg");
+    const halves = ["l", "r"].map((side) => {
+      const h = document.createElement("div");
+      h.className = `seal-half seal-half--${side}`;
+      h.appendChild(svg.cloneNode(true));
+      seal.appendChild(h);
+      return h;
+    });
+    svg.style.visibility = "hidden";
+    const fall = (el, dx, rot, delay) =>
+      anim(el, [
+        { transform: "translate(0,0) rotate(0)" },
+        { transform: `translate(${dx * 0.35}px, -6px) rotate(${rot * 0.2}deg)`, offset: 0.18 },
+        { transform: `translate(${dx}px, 240px) rotate(${rot}deg)`, opacity: 0 },
+      ], { duration: 950, delay, easing: "cubic-bezier(.45,0,.8,.55)" });
+    fall(halves[0], -70, -55, 0);
+    fall(halves[1], 80, 70, 40);
+
+    const size = seal.offsetWidth;
+    for (let i = 0; i < 14; i++) {
+      const c = document.createElement("i");
+      c.className = "crumb";
+      const s = 2 + Math.random() * 5;
+      Object.assign(c.style, { width: s + "px", height: s * (0.7 + Math.random() * 0.5) + "px", margin: `${-s / 2}px 0 0 ${-s / 2}px` });
+      seal.appendChild(c);
+      const a = Math.random() * Math.PI * 2, r = size * (0.35 + Math.random() * 0.6);
+      const dx = Math.cos(a) * r, dy = Math.sin(a) * r * 0.6;
+      anim(c, [
+        { transform: "translate(0,0) rotate(0)", opacity: 1 },
+        { transform: `translate(${dx}px, ${dy - 18}px) rotate(${Math.random() * 360}deg)`, opacity: 1, offset: 0.35 },
+        { transform: `translate(${dx * 1.3}px, ${dy + 160 + Math.random() * 80}px) rotate(${Math.random() * 720}deg)`, opacity: 0 },
+      ], { duration: 800 + Math.random() * 400, easing: "cubic-bezier(.3,.5,.6,1)" });
+    }
+    anim(tilt, [
+      { transform: "translateY(0) scale(1)" },
+      { transform: "translateY(4px) scale(.992)", offset: 0.3 },
+      { transform: "translateY(0) scale(1)" },
+    ], { duration: 380, easing: "ease-out", fill: "none" });
+  }
+
+  // monta a carta dobrada em 3 partes, cada uma mostrando um pedaço da folha real
+  function buildFold() {
+    const sr = sheet.getBoundingClientRect();
+    const lr = envLetter.getBoundingClientRect();
+    const W = sr.width;
+    const ph = Math.round((W * lr.height) / lr.width);
+    sheet.style.setProperty("--ph", ph + "px");
+    sheet.classList.add("has-creases");
+
+    const fold = document.createElement("div");
+    fold.className = "fold";
+    Object.assign(fold.style, { left: sr.left + "px", top: sr.top + "px", width: W + "px", height: ph * 3 + "px" });
+
+    const panels = [0, 1, 2].map((k) => {
+      const p = document.createElement("div");
+      p.className = `fold__panel fold__panel--${k}`;
+      Object.assign(p.style, { top: k * ph + "px", height: ph + "px" });
+      const inner = document.createElement("div");
+      inner.className = "fold__face fold__face--in";
+      const clone = sheet.cloneNode(true);
+      clone.removeAttribute("id");
+      clone.querySelectorAll("[id]").forEach((n) => n.removeAttribute("id"));
+      Object.assign(clone.style, { width: W + "px", top: -k * ph + "px" });
+      inner.appendChild(clone);
+      const shade = document.createElement("i");
+      shade.className = "fold__shade";
+      inner.appendChild(shade);
+      p.appendChild(inner);
+      if (k !== 1) {
+        const out = document.createElement("div");
+        out.className = "fold__face fold__face--out";
+        if (k === 0) {
+          const name = document.createElement("span");
+          name.className = "hand";
+          name.textContent = C.ela;
+          name.style.fontSize = (parseFloat(getComputedStyle(envLetter).fontSize) * W) / lr.width + "px";
+          out.appendChild(name);
+        }
+        p.appendChild(out);
+      }
+      fold.appendChild(p);
+      return { p, shade };
+    });
+    panels[0].p.style.transform = "translateZ(2px) rotateX(-180deg)";
+    panels[2].p.style.transform = "translateZ(1px) rotateX(180deg)";
+
+    const a = lr.width / W;
+    const from = `translate(${lr.left - sr.left}px, ${lr.top - sr.top - ph * a}px) scale(${a})`;
+    fold.style.transform = from;
+    document.body.appendChild(fold);
+
+    const s0 = Math.min(1, (innerHeight * 0.84) / (ph * 3), (innerWidth * 0.9) / W);
+    const center = `translate(${innerWidth / 2 - sr.left - (s0 * W) / 2}px, ${innerHeight / 2 - sr.top - s0 * 1.5 * ph}px) scale(${s0})`;
+
+    const unfold = (i, fromRot) => Promise.all([
+      anim(panels[i].p, [{ transform: `translateZ(${i === 0 ? 2 : 1}px) rotateX(${fromRot}deg)` }, { transform: "translateZ(0) rotateX(0deg)" }],
+        { duration: 820, easing: "cubic-bezier(.55,.05,.25,1)" }).finished,
+      anim(panels[i].shade, [{ opacity: 0.6 }, { opacity: 0.25, offset: 0.6 }, { opacity: 0 }], { duration: 820 }).finished,
+      anim(panels[1].shade, [{ opacity: 0.25 }, { opacity: 0 }], { duration: 700, easing: "ease-out" }).finished,
+    ]);
+
+    return {
+      el: fold,
+      toCenter: () => anim(fold, [{ transform: from }, { transform: center }], { duration: 1000, easing: "cubic-bezier(.6,0,.25,1)" }).finished,
+      unfoldTop: () => unfold(0, -180),
+      unfoldBottom: () => unfold(2, 180),
+      toSheet: () => anim(fold, [{ transform: center }, { transform: "translate(0,0) scale(1)" }], { duration: 1100, easing: "cubic-bezier(.6,0,.2,1)" }).finished,
+    };
+  }
+
+  function revealDesk() {
+    document.body.classList.remove("is-sealed");
+    desk.removeAttribute("aria-hidden");
+    desk.classList.add("is-in");
+  }
+
+  seal.addEventListener("click", async () => {
     if (busy) return;
     busy = true;
     audioCtx();
     primeMusic();
-
+    window.scrollTo(0, 0);
+    tilt.style.transform = "";
     intro.classList.add("is-opening");
+
+    if (reduceMotion) {
+      startMusic();
+      intro.classList.add("is-gone");
+      revealDesk();
+      return;
+    }
+
+    // 1. o selo cede e racha
+    await anim(seal, [{ transform: "scale(1)" }, { transform: "scale(.9)" }], { duration: 110, easing: "ease-out" }).finished;
     play("crack");
+    breakSeal();
     await wait(420);
 
+    // 2. a aba abre e mostra o forro
     play("paper", 0.6);
     env.classList.add("is-flap-open");
-    await wait(480);
+    await wait(520);
     env.classList.add("is-flap-back");
-    await wait(380);
+    await wait(420);
 
+    // 3. a carta sai do envelope
     play("slide");
     intro.classList.add("is-rising");
     startMusic();
     await wait(1050);
 
-    window.scrollTo(0, 0);
-    document.body.classList.remove("is-sealed");
-    desk.removeAttribute("aria-hidden");
-    intro.classList.add("is-gone");
-    desk.classList.add("is-in");
-    play("paper", 0.35);
+    // 4. o envelope cai e a carta vem para o centro
+    const fold = buildFold();
+    envLetter.style.visibility = "hidden";
+    play("whoosh");
+    anim(env, [{ transform: "translateY(46%)" }, { transform: "translateY(130vh) rotate(9deg)" }], { duration: 1000, easing: "cubic-bezier(.55,0,.8,.4)" });
+    $("#hint").style.display = "none";
+    await fold.toCenter();
+    await wait(150);
+
+    // 5. desdobra em duas etapas
+    play("fold");
+    await fold.unfoldTop();
+    await wait(80);
+    play("fold");
+    await fold.unfoldBottom();
+    await wait(250);
+
+    // 6. a folha se acomoda na mesa e vira o site
+    const settle = fold.toSheet();
+    setTimeout(revealDesk, 500);
+    await settle;
+    intro.remove();
+    await anim(fold.el, [{ opacity: 1 }, { opacity: 0 }], { duration: 350 }).finished;
+    fold.el.remove();
     busy = false;
   });
 
   $("#again").addEventListener("click", async () => {
-    await fade(0, 600); audio.pause(); musicBtn.hidden = true;
-    desk.classList.remove("is-in");
-    desk.setAttribute("aria-hidden", "true");
-    document.body.classList.add("is-sealed");
-    intro.className = "intro";
-    env.className = "envelope";
-    window.scrollTo(0, 0);
-    audio.currentTime = 0;
-    $("#seal").focus();
+    if (!audio.paused) await fade(0, 600);
+    location.reload();
   });
 })();

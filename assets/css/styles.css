@@ -12,6 +12,7 @@
   --ink: #2b1418;
   --ink-soft: #6b5257;
   --wax: #8e1b2c;
+  --liner: #6a1322;
 
   --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
   --hand: "Mrs Saint Delafield", "Snell Roundhand", cursive;
@@ -62,28 +63,39 @@ button { font: inherit; color: inherit; }
 .envelope {
   --w: min(520px, 88vw);
   position: relative; width: var(--w); aspect-ratio: 3 / 2;
-  perspective: 1400px;
   animation: settle 1.2s var(--ease-out) both;
-  transition: transform 0.9s var(--ease-in-out);
+  transition: transform 1s var(--ease-in-out);
+}
+.envelope__tilt {
+  position: absolute; inset: 0;
+  perspective: 1400px;
+  transition: transform .8s var(--ease-out);
 }
 .envelope__back {
   position: absolute; inset: 0; border-radius: 3px;
   background: var(--env-dark);
   box-shadow: 0 2px 2px rgba(0,0,0,.25), 0 30px 60px -18px rgba(0,0,0,.65), 0 60px 120px -40px rgba(0,0,0,.5);
 }
-/* a carta dentro do envelope */
+/* forro estampado por dentro do envelope */
+.envelope__back::before, .flap-in::after {
+  content: ""; position: absolute;
+  background-color: var(--liner);
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(233,184,192,.22) 0 1.2px, transparent 1.6px),
+    repeating-linear-gradient(45deg, rgba(233,184,192,.10) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-45deg, rgba(233,184,192,.10) 0 1px, transparent 1px 14px);
+  background-size: 19.8px 19.8px, auto, auto;
+}
+.envelope__back::before { inset: 4% 4% 30%; border-radius: 2px; }
+
+/* carta dobrada dentro do envelope */
 .envelope__letter {
   position: absolute; left: 6%; right: 6%; top: 5%; height: 90%; z-index: 2;
-  background: var(--paper); border-radius: 2px;
-  padding: 7% 8%; font-size: calc(var(--w) * 0.09); line-height: 1; color: var(--ink);
-  box-shadow: 0 -1px 0 rgba(0,0,0,.04), 0 10px 30px -10px rgba(0,0,0,.25);
-  transition: transform 1s var(--ease-out);
-}
-.envelope__letter::after {
-  content: ""; position: absolute; left: 8%; right: 14%; top: 34%; height: 40%;
-  background: repeating-linear-gradient(180deg, rgba(43,20,24,.16) 0 1.5px, transparent 1.5px 11%);
-  -webkit-mask: linear-gradient(90deg, #000 70%, transparent);
-  mask: linear-gradient(90deg, #000 70%, transparent);
+  display: grid; place-items: center;
+  background: var(--paper); border-radius: 1px;
+  font-size: calc(var(--w) * 0.1); line-height: 1; color: var(--ink);
+  box-shadow: 0 -1px 0 rgba(0,0,0,.04), 0 10px 30px -10px rgba(0,0,0,.35);
+  transition: transform 1s var(--ease-in-out);
 }
 /* bolso frontal (3 abas dobradas) */
 .envelope__pocket { position: absolute; inset: 0; z-index: 3; filter: drop-shadow(0 -1px 1px rgba(60,20,25,.12)); }
@@ -95,17 +107,31 @@ button { font: inherit; color: inherit; }
   position: absolute; left: 0; right: 0; bottom: 9%; text-align: center;
   font-size: calc(var(--w) * 0.085); line-height: 1; color: #4b2a30; opacity: .85;
 }
-/* aba superior */
+/* aba superior: frente lisa, verso com forro */
 .envelope__flap {
   position: absolute; left: 0; right: 0; top: 0; height: 58%; z-index: 4;
   transform-origin: 50% 0; transform-style: preserve-3d;
-  transition: transform 0.85s var(--ease-in-out);
-  filter: drop-shadow(0 3px 3px rgba(60,20,25,.18));
+  transition: transform 0.95s cubic-bezier(.5, 0, .2, 1);
 }
-.envelope__flap i {
-  position: absolute; inset: 0; background: linear-gradient(180deg, var(--env) 0%, #e1d1ca 100%);
-  clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 3px 3px 0 0;
+.flap-out, .flap-in {
+  position: absolute; inset: 0;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
+.flap-out {
+  background: linear-gradient(180deg, var(--env) 0%, #e1d1ca 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.flap-out::after { /* sombra que a aba projeta no bolso */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(60,20,25,.08));
+}
+.flap-in {
+  transform: rotateX(180deg);
+  background: var(--env-shade);
+  clip-path: polygon(0 100%, 100% 100%, 50% 0);
+}
+.flap-in::after { inset: 0; clip-path: polygon(5% 100%, 95% 100%, 50% 9%); }
+
 /* selo */
 .seal {
   position: absolute; z-index: 6; left: 50%; top: 58%;
@@ -123,22 +149,50 @@ button { font: inherit; color: inherit; }
   border: 1px solid rgba(233, 184, 192, .55);
   animation: halo 2.6s var(--ease-out) 1.4s infinite;
 }
+.seal-half { position: absolute; inset: 0; }
+.seal-half--l { clip-path: polygon(0 0, 53% 0, 47% 18%, 56% 37%, 46% 58%, 54% 79%, 49% 100%, 0 100%); }
+.seal-half--r { clip-path: polygon(53% 0, 100% 0, 100% 100%, 49% 100%, 54% 79%, 46% 58%, 56% 37%, 47% 18%); }
+.crumb {
+  position: absolute; left: 50%; top: 50%;
+  background: #7d1626; border-radius: 45% 60% 40% 55%;
+}
 
 /* sequência de abertura */
-.is-opening .seal { animation: crack 0.6s var(--ease-in-out) forwards; pointer-events: none; }
+.is-opening .seal { pointer-events: none; }
 .is-opening .seal::after { display: none; }
 .is-flap-open .envelope__flap { transform: rotateX(180deg); }
 .is-flap-back .envelope__flap { z-index: 1; }
-.is-rising .envelope__letter { transform: translateY(-62%); }
-.is-rising .envelope { transform: translateY(22%); }
+.is-rising .envelope__letter { transform: translateY(-112%); }
+.is-rising .envelope { transform: translateY(46%); }
+
+/* carta dobrada em três (criada no JS) */
+.fold {
+  position: fixed; z-index: 25; pointer-events: none;
+  transform-origin: 0 0; transform-style: preserve-3d; perspective: 2200px;
+}
+.fold__panel { position: absolute; left: 0; right: 0; transform-style: preserve-3d; }
+.fold__panel--0 { transform-origin: 50% 100%; }
+.fold__panel--2 { transform-origin: 50% 0; }
+.fold__face {
+  position: absolute; inset: 0; overflow: hidden; background: var(--paper);
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.fold__panel--1 .fold__face { box-shadow: 0 30px 60px -24px rgba(10,0,3,.65); }
+.fold__face--out { transform: rotateX(180deg); display: grid; place-items: center; color: var(--ink); line-height: 1; }
+.fold__face .sheet { position: absolute; left: 0; margin: 0; max-width: none; box-shadow: none; }
+.fold__shade {
+  position: absolute; inset: 0; opacity: 0;
+  background: linear-gradient(180deg, rgba(43,20,24,.55), rgba(43,20,24,.25));
+}
+.fold__panel--2 .fold__shade { background: linear-gradient(0deg, rgba(43,20,24,.55), rgba(43,20,24,.25)); }
 
 /* ================= mesa + carta ================= */
 .desk {
   padding: clamp(28px, 8vh, 88px) 12px 120px;
-  opacity: 0; transform: translateY(40px);
-  transition: opacity 1s var(--ease-out), transform 1.2s var(--ease-out);
+  opacity: 0;
+  transition: opacity .9s var(--ease-in-out);
 }
-.desk.is-in { opacity: 1; transform: none; }
+.desk.is-in { opacity: 1; }
 
 .sheet {
   position: relative; max-width: 680px; margin: 0 auto;
@@ -152,6 +206,14 @@ button { font: inherit; color: inherit; }
     0 40px 80px -30px rgba(10,0,3,.7);
 }
 .sheet p { margin: 0 0 1.1em; max-width: 34em; }
+.sheet.has-creases::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: calc(var(--ph) * 3); pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(43,20,24,.07), rgba(255,255,255,.55)) 0 calc(var(--ph) - 1px) / 100% 2px no-repeat,
+    linear-gradient(180deg, rgba(43,20,24,.07), rgba(255,255,255,.55)) 0 calc(var(--ph) * 2 - 1px) / 100% 2px no-repeat,
+    linear-gradient(180deg, transparent, rgba(43,20,24,.025) 92%, transparent) 0 0 / 100% var(--ph) no-repeat,
+    linear-gradient(0deg, transparent, rgba(43,20,24,.025) 92%, transparent) 0 calc(var(--ph) * 2) / 100% var(--ph) no-repeat;
+}
 
 .sheet__date { text-align: right; font-style: italic; color: var(--ink-soft); font-size: 16px; margin-bottom: 2.2em !important; max-width: none !important; }
 .salutation { font-size: clamp(64px, 14vw, 92px); line-height: .9; margin: 0 0 .35em -.04em; color: var(--ink); }
@@ -255,12 +317,6 @@ button { font: inherit; color: inherit; }
 /* ================= animações ================= */
 @keyframes settle { from { opacity: 0; transform: translateY(30px) rotate(-2deg); } to { opacity: 1; transform: none; } }
 @keyframes halo { 0% { opacity: .9; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.35); } }
-@keyframes crack {
-  0% { transform: none; }
-  18% { transform: scale(1.08) rotate(4deg); }
-  30% { transform: scale(1.02) rotate(-6deg); opacity: 1; }
-  100% { transform: translate(18%, 140%) rotate(38deg) scale(.9); opacity: 0; }
-}
 @keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 

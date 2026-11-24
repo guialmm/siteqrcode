@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css?v=10">
+  <link rel="stylesheet" href="assets/css/styles.css?v=11">
 </head>
 
 <body class="is-sealed">
@@ -25,15 +25,16 @@
   <!-- Abertura: envelope lacrado -->
   <div class="intro" id="intro">
     <div class="envelope" id="envelope">
+     <div class="envelope__tilt" id="tilt">
       <div class="envelope__back"></div>
-      <div class="envelope__letter" aria-hidden="true">
-        <span class="hand" data-name-her>Anna</span>,
+      <div class="envelope__letter" id="envLetter" aria-hidden="true">
+        <span class="hand" data-name-her>Anna</span>
       </div>
       <div class="envelope__pocket" aria-hidden="true">
         <i class="pocket-l"></i><i class="pocket-r"></i><i class="pocket-b"></i>
         <span class="envelope__to hand">para <span data-name-her>Anna</span></span>
       </div>
-      <div class="envelope__flap" aria-hidden="true"><i></i></div>
+      <div class="envelope__flap" aria-hidden="true"><i class="flap-out"></i><i class="flap-in"></i></div>
 
       <button class="seal" id="seal" type="button" aria-label="Abrir a carta">
         <svg viewBox="0 0 120 120" aria-hidden="true">
@@ -50,12 +51,13 @@
           <text x="60" y="71" text-anchor="middle" class="seal__mono">G<tspan dx="1" dy="-2" class="seal__amp">&amp;</tspan><tspan dx="1" dy="2">A</tspan></text>
         </svg>
       </button>
+     </div>
     </div>
     <p class="intro__hint" id="hint">Toque no selo para abrir</p>
   </div>
 
   <main class="desk" id="desk" aria-hidden="true">
-    <article class="sheet">
+    <article class="sheet" id="sheet">
       <p class="sheet__date" id="today"></p>
 
       <h1 class="salutation hand"><span data-name-her>Anna</span>,</h1>
@@ -107,7 +109,7 @@
     <button class="lightbox__btn lightbox__next" id="lbNext" type="button" aria-label="Próxima foto">›</button>
   </div>
 
-  <script src="assets/js/config.js?v=10"></script>
-  <script src="assets/js/main.js?v=10"></script>
+  <script src="assets/js/config.js?v=11"></script>
+  <script src="assets/js/main.js?v=11"></script>
 </body>
 </html>
